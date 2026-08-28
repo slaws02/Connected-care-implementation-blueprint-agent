@@ -56,7 +56,7 @@ st.markdown(f"**Assessment date:** {assessment_date}")
 if assessment.blockers: st.error("Employer launch readiness has unresolved blockers. The agent recommends action; final decisions remain human-owned.")
 else: st.success("No blocking tasks remain in the simulated scenario. Human employer launch-readiness approval is still required.")
 
-blueprint_tab,decisions_tab,actions_tab,devices_tab,readiness_tab,memory_tab,evidence_tab=st.tabs(["Employer Blueprint","Decisions","Actions","Member & Device Enablement","Employer Launch Readiness","Implementation Memory","Evidence"])
+blueprint_tab,decisions_tab,actions_tab,devices_tab,readiness_tab,memory_tab,prompt_tab,evidence_tab=st.tabs(["Employer Blueprint","Decisions","Actions","Member & Device Enablement","Employer Launch Readiness","Implementation Memory","How to Use","Evidence"])
 
 with blueprint_tab:
     st.subheader("Employer Implementation Requirements")
@@ -99,6 +99,22 @@ with memory_tab:
     q=st.text_input("Ask the implementation memory",value="Why is the smart scale still an open implementation issue?")
     st.markdown(query_memory(q,assessment.memory))
     with st.expander("View synthetic decision timeline"): st.dataframe(pd.DataFrame(assessment.memory),use_container_width=True,hide_index=True)
+
+with prompt_tab:
+    st.subheader("How to Use This Agent")
+    st.caption("These starter prompts are examples and frameworks. Adapt the scope, sources, business constraint, and output to your implementation question.")
+    st.markdown("**Prompt framework:** Review **[scope]** + compare **[sources]** + identify **[requirements/decisions]** + trace **[downstream impact]** + recommend **[questions/actions/owners]**.")
+    prompts=[
+        "Review the employer implementation and tell me what requirements are confirmed, unresolved, or contradictory before we can finalize the launch plan.",
+        "Compare the CRM, contract, project plan, meeting notes, and internal implementation standard. Identify anything the employer expects that is not currently reflected in the implementation plan.",
+        "Generate the questions I should take into the next client implementation meeting. Prioritize questions that affect eligibility, employee communications, billing, reporting, or downstream member/device readiness.",
+        "Convert the latest implementation working-session notes into actions. Assign a suggested owner, due date, dependency, and explain why each action matters to employer launch readiness.",
+        "Trace the impact of the unresolved eligibility decision. Show every downstream area that could be affected if we launch before resolving it.",
+        "Act as my pre-read for an employer launch-readiness meeting. Give me the current implementation status, unresolved decisions, top dependencies, client actions needed, internal actions needed, and the three items I should not allow to leave the meeting without an owner.",
+    ]
+    for i,p in enumerate(prompts,1): st.markdown(f"**{i}.** {p}")
+    st.info("Tip: stronger questions name the implementation scope, sources to compare, decision you are making, downstream areas that matter, and the output you need.")
+    st.warning("Human review: verify source freshness, client decisions, owners, and downstream impact before acting. The agent should not invent a missing client decision.")
 
 with evidence_tab:
     st.subheader("Cross-System Evidence")
